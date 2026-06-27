@@ -318,14 +318,35 @@ function saveRate(){
   localStorage.setItem('habbo_credit_rate', getRate());
 }
 
+const values = {fair:0, quick:0, good:0, high:0};
+
+function animateValue(id, target){
+  const start = values[id] || 0;
+  const duration = 350;
+  const startTime = performance.now();
+
+  function frame(now){
+    const progress = Math.min((now-startTime)/duration,1);
+    const eased = 1 - Math.pow(1-progress,3);
+    const current = Math.round(start + (target-start)*eased);
+    document.getElementById(id).textContent = current + 'c';
+    if(progress < 1){
+      requestAnimationFrame(frame);
+    }else{
+      values[id] = target;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
 function calc(){
   const aud = parseFloat(document.getElementById('aud').value) || 0;
   const fair = Math.round(aud * getRate());
 
-  document.getElementById('fair').textContent = fair + 'c';
-  document.getElementById('quick').textContent = Math.round(fair * 0.95) + 'c';
-  document.getElementById('good').textContent = Math.round(fair * 1.10) + 'c';
-  document.getElementById('high').textContent = Math.round(fair * 1.25) + 'c';
+  animateValue('fair', fair);
+  animateValue('quick', Math.round(fair * 0.95));
+  animateValue('good', Math.round(fair * 1.10));
+  animateValue('high', Math.round(fair * 1.25));
 }
 
 calc();
