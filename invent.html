@@ -102,7 +102,7 @@ h1{margin:0;font-size:36px;font-weight:850;letter-spacing:-1px}
 .action{height:52px;border:0;border-radius:17px;font-size:17px;font-weight:900;cursor:pointer}
 .cancel{background:#171d29;color:#aeb8ca}.add{background:var(--blue);color:#06101e}
 .bottom-nav{
-  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  position:static;
   width:min(520px,calc(100% - 32px));height:74px;border-radius:28px;
   background:rgba(9,13,21,.92);border:1px solid var(--line);backdrop-filter:blur(18px);
   display:grid;grid-template-columns:1fr 1fr;padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.42);
@@ -130,6 +130,11 @@ h1{margin:0;font-size:36px;font-weight:850;letter-spacing:-1px}
       <span>Credits</span>
     </div>
   </section>
+
+  <nav class="bottom-nav">
+  <a class="nav-btn" href="index.html">🧮 Calculator</a>
+  <a class="nav-btn active" href="invent.html">📦 Inventory</a>
+</nav>
 
   <section class="search-card">
     <span>🔍</span>
@@ -188,10 +193,7 @@ h1{margin:0;font-size:36px;font-weight:850;letter-spacing:-1px}
   </div>
 </div>
 
-<nav class="bottom-nav">
-  <a class="nav-btn" href="index.html">🧮 Calculator</a>
-  <a class="nav-btn active" href="invent.html">📦 Inventory</a>
-</nav>
+
 
 <script>
 const STORAGE_KEY = 'traderplus_inventory_v7';
