@@ -402,7 +402,7 @@ h1{
 
     <section class="fair-card">
       <div class="fair-title">Fair Value</div>
-      <div id="fair" class="fair-value">🪙 0</div>
+      <div id="fair" class="fair-value">0</div>
     </section>
 
     <section class="list">
@@ -414,7 +414,7 @@ h1{
             <div class="row-sub">Fair Value × 0.95</div>
           </div>
         </div>
-        <div id="quick" class="row-value">🪙 0</div>
+        <div id="quick" class="row-value">0</div>
       </div>
 
       <div class="row good">
@@ -425,7 +425,7 @@ h1{
             <div class="row-sub">Fair Value × 1.10</div>
           </div>
         </div>
-        <div id="good" class="row-value">🪙 0</div>
+        <div id="good" class="row-value">0</div>
       </div>
 
       <div class="row high">
@@ -436,7 +436,7 @@ h1{
             <div class="row-sub">Fair Value × 1.25</div>
           </div>
         </div>
-        <div id="high" class="row-value">🪙 0</div>
+        <div id="high" class="row-value">0</div>
       </div>
     </section>
 
@@ -458,17 +458,17 @@ h1{
         <div class="offer-detail">
           <div class="detail-box">
             <div class="detail-label">Buyer Offered</div>
-            <div id="buyerValue" class="detail-value">🪙 0</div>
+            <div id="buyerValue" class="detail-value">0</div>
           </div>
           <div class="detail-box">
             <div class="detail-label">Fair Value</div>
-            <div id="fairSmall" class="detail-value">🪙 0</div>
+            <div id="fairSmall" class="detail-value">0</div>
           </div>
         </div>
       </div>
     </section>
 
-    <footer class="footer">Made for Habbo NFT Trading ❤️🪙</footer>
+    <footer class="footer">Made for Habbo NFT Trading ❤️</footer>
   </main>
 
 <script>
@@ -498,7 +498,7 @@ function animateValue(id, target){
     const progress = Math.min((now-startTime)/duration,1);
     const eased = 1 - Math.pow(1-progress,3);
     const current = Math.round(start + (target-start)*eased);
-    document.getElementById(id).textContent = '🪙 ' + current;
+    document.getElementById(id).textContent = '' + current;
 
     if(progress < 1){
       requestAnimationFrame(frame);
@@ -516,8 +516,8 @@ function setOfferState(state, status, percentText, offer, fair){
 
   document.getElementById('offerStatus').textContent = status;
   document.getElementById('offerPercent').textContent = percentText;
-  document.getElementById('buyerValue').textContent = '🪙 ' + offer;
-  document.getElementById('fairSmall').textContent = '🪙 ' + fair;
+  document.getElementById('buyerValue').textContent = '' + offer;
+  document.getElementById('fairSmall').textContent = '' + fair;
 }
 
 function calc(){
