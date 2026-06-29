@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trader+ Inventory</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#070a10;--card:#090d15;--line:#242b38;--text:#f5f7fb;
+  --muted:#8f9bad;--blue:#4e9cff;--gold:#ffc42d;--green:#21e17b;--red:#ff5c5c;
+}
+body{
+  margin:0;min-height:100vh;background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--text);display:flex;justify-content:center;padding:34px 20px 110px;
+}
+.app{width:520px;max-width:100%}
+.header{text-align:center;margin:42px 0 34px}
+h1{margin:0;font-size:36px;font-weight:850;letter-spacing:-1px}
+.sub{margin-top:10px;color:var(--muted);font-size:20px;font-weight:650}
+.rate-pill{
+  margin-top:16px;display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;border-radius:999px;background:#121820;border:1px solid #232b38;
+  color:#9da9bd;font-size:20px;
+}
+.rate-pill input{
+  width:54px;border:0;outline:0;background:transparent;color:#cbd6e8;
+  font:inherit;font-weight:800;text-align:center;padding:0;
+}
+.search-card{
+  display:flex;align-items:center;gap:14px;height:68px;padding:0 22px;
+  border-radius:24px;background:var(--card);border:1px solid var(--line);
+}
+.search-card span{color:var(--muted);font-size:22px}
+.search-card input{
+  flex:1;border:0;outline:0;background:transparent;color:var(--text);
+  font-size:22px;font-weight:650;
+}
+.search-card input::placeholder{color:#3a4250}
+.summary{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.summary-box{padding:20px;border-radius:24px;background:var(--card);border:1px solid var(--line)}
+.summary-label{color:var(--muted);font-size:16px;font-weight:750}
+.summary-value{margin-top:8px;color:var(--gold);font-size:30px;font-weight:900;letter-spacing:-1px}
+.add-card{
+  margin-top:20px;min-height:84px;border-radius:26px;background:rgba(78,156,255,.10);
+  border:1px solid rgba(78,156,255,.36);display:flex;align-items:center;justify-content:center;
+  gap:12px;color:var(--blue);font-size:24px;font-weight:850;cursor:pointer;user-select:none;
+}
+.inventory{margin-top:26px;display:flex;flex-direction:column;gap:16px}
+.item{
+  position:relative;overflow:hidden;border-radius:28px;background:var(--card);
+  border:1px solid var(--line);padding:22px;
+}
+.item::before{
+  content:"";position:absolute;left:0;top:20px;bottom:20px;width:5px;
+  border-radius:0 6px 6px 0;background:var(--accent,#4e9cff);
+}
+.item-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.name{font-size:26px;font-weight:850;letter-spacing:-.5px;line-height:1.15;word-break:break-word}
+.type{margin-top:6px;color:var(--muted);font-size:17px;font-weight:650}
+.remove-btn{
+  border:1px solid rgba(255,92,92,.35);background:rgba(255,92,92,.12);color:#ff8d8d;
+  padding:9px 12px;border-radius:14px;font-size:14px;font-weight:850;cursor:pointer;flex:none;
+}
+.price-area{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06)}
+.price-label{color:#aeb8ca;font-size:16px;font-weight:850;margin-bottom:12px}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.price-box{
+  height:76px;padding:10px 14px;border-radius:18px;background:#070a10;
+  border:1px solid #2a3342;display:flex;flex-direction:column;justify-content:center;
+}
+.price-box label{color:#8f9bad;font-size:13px;font-weight:850;margin-bottom:5px}
+.input-line{display:flex;align-items:center;gap:8px}
+.input-line input{
+  width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);
+  font-size:24px;font-weight:900;
+}
+.input-line input::placeholder{color:#354052}
+.unit{color:#8f9bad;font-size:15px;font-weight:900}
+.empty{
+  margin-top:26px;padding:34px 24px;border-radius:28px;background:var(--card);
+  border:1px dashed #384255;text-align:center;color:var(--muted);font-size:19px;font-weight:650;
+}
+.modal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);
+  align-items:center;justify-content:center;padding:20px;z-index:10;
+}
+.modal.show{display:flex}
+.modal-card{
+  width:min(460px,100%);background:#0b1019;border:1px solid #2a3342;
+  border-radius:30px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.55);
+}
+.modal-title{font-size:28px;font-weight:900;letter-spacing:-.6px;margin-bottom:20px}
+.field{margin-top:16px}
+.field label{display:block;color:#aeb8ca;font-size:15px;font-weight:850;margin-bottom:8px}
+.field input,.field select{
+  width:100%;height:52px;border-radius:16px;border:1px solid #2a3342;
+  background:#070a10;color:var(--text);padding:0 14px;font-size:20px;font-weight:750;outline:none;
+}
+.modal-actions{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.action{height:52px;border:0;border-radius:17px;font-size:17px;font-weight:900;cursor:pointer}
+.cancel{background:#171d29;color:#aeb8ca}.add{background:var(--blue);color:#06101e}
+.bottom-nav{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  width:min(520px,calc(100% - 32px));height:74px;border-radius:28px;
+  background:rgba(9,13,21,.92);border:1px solid var(--line);backdrop-filter:blur(18px);
+  display:grid;grid-template-columns:1fr 1fr;padding:8px;box-shadow:0 14px 40px rgba(0,0,0,.42);
+}
+.nav-btn{
+  border-radius:22px;display:flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;color:var(--muted);font-size:18px;font-weight:850;
+}
+.nav-btn.active{background:#121820;color:var(--text)}
+@media(max-width:520px){
+  body{padding:22px 16px 110px}.header{margin:34px 0 30px}h1{font-size:34px}
+  .summary-value{font-size:26px}.item{padding:18px}.name{font-size:24px}
+  .price-grid{grid-template-columns:1fr}.price-box{height:72px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <section class="header">
+    <h1>Trader+</h1>
+    <div class="sub">Inventory</div>
+    <div class="rate-pill">
+      <span>1 AUD =</span>
+      <input id="rate" type="number" step="1" min="1" value="25" oninput="saveRate(); renderInventory()">
+      <span>Credits</span>
+    </div>
+  </section>
+
+  <section class="search-card">
+    <span>🔍</span>
+    <input id="search" type="text" placeholder="Search collectibles..." oninput="renderInventory()">
+  </section>
+
+  <section class="summary">
+    <div class="summary-box">
+      <div class="summary-label">Collectibles</div>
+      <div id="itemCount" class="summary-value">0</div>
+    </div>
+    <div class="summary-box">
+      <div class="summary-label">Total Credits</div>
+      <div id="totalCredits" class="summary-value">0c</div>
+    </div>
+  </section>
+
+  <section class="add-card" onclick="openModal()">
+    <span>＋</span><span>Add Collectible</span>
+  </section>
+
+  <section class="inventory" id="inventory"></section>
+</main>
+
+<div id="modal" class="modal">
+  <div class="modal-card">
+    <div class="modal-title">Add Collectible</div>
+
+    <div class="field">
+      <label>Name</label>
+      <input id="newName" type="text" placeholder="Example: Cheshire Cat Grin">
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <select id="newType">
+        <option>Wearable</option>
+        <option>Furni</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Bought Price</label>
+      <input id="newCredits" type="number" step="1" placeholder="Credits e.g. 375" oninput="syncNewFromCredits()">
+    </div>
+
+    <div class="field">
+      <input id="newAud" type="number" step="0.01" placeholder="AUD e.g. 15.00" oninput="syncNewFromAud()">
+    </div>
+
+    <div class="modal-actions">
+      <button class="action cancel" onclick="closeModal()">Cancel</button>
+      <button class="action add" onclick="addCollectible()">Add</button>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-btn" href="index.html">🧮 Calculator</a>
+  <a class="nav-btn active" href="invent.html">📦 Inventory</a>
+</nav>
+
+<script>
+const STORAGE_KEY = 'traderplus_inventory_v7';
+const RATE_KEY = 'habbo_credit_rate';
+const colors = ['#4e9cff','#ffc42d','#ff941f','#21e17b','#b37dff'];
+
+const rateInput = document.getElementById('rate');
+const savedRate = localStorage.getItem(RATE_KEY);
+if(savedRate) rateInput.value = savedRate;
+
+function getRate(){
+  return parseFloat(rateInput.value) || 25;
+}
+
+function saveRate(){
+  localStorage.setItem(RATE_KEY, getRate());
+}
+
+function creditsToAud(credits){
+  return credits / getRate();
+}
+
+function audToCredits(aud){
+  return Math.round(aud * getRate());
+}
+
+function loadItems(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []}
+  catch(e){return []}
+}
+
+function saveItems(items){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+function escapeHtml(text){
+  return String(text).replace(/[&<>"']/g, m => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[m]));
+}
+
+function renderInventory(){
+  const items = loadItems();
+  const query = document.getElementById('search').value.toLowerCase().trim();
+  const filtered = items.filter(item => item.name.toLowerCase().includes(query));
+  const inventory = document.getElementById('inventory');
+
+  document.getElementById('itemCount').textContent = filtered.length;
+
+  const total = items.reduce((sum,item) => sum + (parseFloat(item.credits) || 0), 0);
+  document.getElementById('totalCredits').textContent = Math.round(total).toLocaleString() + 'c';
+
+  if(filtered.length === 0){
+    inventory.innerHTML = '<div class="empty">No collectibles yet. Tap Add Collectible to start.</div>';
+    return;
+  }
+
+  inventory.innerHTML = filtered.map((item,index) => {
+    const accent = item.accent || colors[index % colors.length];
+    const credits = parseFloat(item.credits) || 0;
+    const aud = creditsToAud(credits);
+    return `
+      <article class="item" style="--accent:${accent}">
+        <div class="item-head">
+          <div>
+            <div class="name">${escapeHtml(item.name)}</div>
+            <div class="type">${escapeHtml(item.type || 'Collectible')}</div>
+          </div>
+          <button class="remove-btn" onclick="removeCollectible('${item.id}')">Remove</button>
+        </div>
+
+        <div class="price-area">
+          <div class="price-label">Purchase Price</div>
+          <div class="price-grid">
+            <div class="price-box">
+              <label>Credits</label>
+              <div class="input-line">
+                <input type="number" step="1" value="${credits || ''}" placeholder="0" oninput="updateFromCredits('${item.id}', this.value)">
+                <span class="unit">c</span>
+              </div>
+            </div>
+            <div class="price-box">
+              <label>AUD</label>
+              <div class="input-line">
+                <input type="number" step="0.01" value="${credits ? aud.toFixed(2) : ''}" placeholder="0.00" oninput="updateFromAud('${item.id}', this.value)">
+                <span class="unit">AUD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function openModal(){
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => document.getElementById('newName').focus(), 50);
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('newName').value='';
+  document.getElementById('newType').value='Wearable';
+  document.getElementById('newCredits').value='';
+  document.getElementById('newAud').value='';
+}
+
+function syncNewFromCredits(){
+  const credits = parseFloat(document.getElementById('newCredits').value) || 0;
+  document.getElementById('newAud').value = credits ? creditsToAud(credits).toFixed(2) : '';
+}
+
+function syncNewFromAud(){
+  const aud = parseFloat(document.getElementById('newAud').value) || 0;
+  document.getElementById('newCredits').value = aud ? audToCredits(aud) : '';
+}
+
+function addCollectible(){
+  const name = document.getElementById('newName').value.trim();
+  const type = document.getElementById('newType').value;
+  const credits = parseFloat(document.getElementById('newCredits').value) || 0;
+
+  if(!name){
+    alert('Please enter a collectible name.');
+    return;
+  }
+
+  const items = loadItems();
+  items.push({
+    id:Date.now().toString(36)+Math.random().toString(36).slice(2),
+    name,type,credits,
+    accent:colors[items.length % colors.length]
+  });
+
+  saveItems(items);
+  closeModal();
+  renderInventory();
+}
+
+function updateFromCredits(id,value){
+  const items = loadItems();
+  const item = items.find(i => i.id === id);
+  if(item){
+    item.credits = parseFloat(value) || 0;
+    saveItems(items);
+    renderInventory();
+  }
+}
+
+function updateFromAud(id,value){
+  const items = loadItems();
+  const item = items.find(i => i.id === id);
+  if(item){
+    item.credits = audToCredits(parseFloat(value) || 0);
+    saveItems(items);
+    renderInventory();
+  }
+}
+
+function removeCollectible(id){
+  if(!confirm('Remove this collectible?')) return;
+  saveItems(loadItems().filter(item => item.id !== id));
+  renderInventory();
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if(e.target.id === 'modal') closeModal();
+});
+
+renderInventory();
+</script>
+</body>
+</html>

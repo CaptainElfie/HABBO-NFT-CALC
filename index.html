@@ -15,7 +15,7 @@ body{
   color:#f5f7fb;
   display:flex;
   justify-content:center;
-  padding:44px 20px;
+  padding:44px 20px 118px;
 }
 
 .app{
@@ -356,6 +356,43 @@ h1{
   font-weight:520;
 }
 
+
+.bottom-nav{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  transform:translateX(-50%);
+  width:min(520px,calc(100% - 32px));
+  height:74px;
+  border-radius:28px;
+  background:rgba(9,13,21,.92);
+  border:1px solid #242b38;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  padding:8px;
+  box-shadow:0 14px 40px rgba(0,0,0,.42);
+  z-index:99;
+}
+
+.nav-btn{
+  border-radius:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+  color:#8f9bad;
+  font-size:18px;
+  font-weight:850;
+}
+
+.nav-btn.active{
+  background:#121820;
+  color:#f5f7fb;
+}
+
 @media(max-width:520px){
   body{padding:24px 16px;}
   .header{margin:52px 0 44px;}
@@ -470,6 +507,12 @@ h1{
 
     <footer class="footer">Made for Habbo NFT Trading ❤️</footer>
   </main>
+
+
+<nav class="bottom-nav">
+  <a class="nav-btn active" href="index.html">🧮 Calculator</a>
+  <a class="nav-btn" href="invent.html">📦 Inventory</a>
+</nav>
 
 <script>
 const rateInput = document.getElementById('rate');
