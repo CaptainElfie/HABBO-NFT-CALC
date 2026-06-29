@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Habbo NFT Credit Calculator</title>
+<title>Trader+</title>
 <style>
 *{box-sizing:border-box;}
 
@@ -91,9 +91,7 @@ h1{
   letter-spacing:-1.5px;
 }
 
-.money-input input::placeholder{
-  color:#252b37;
-}
+.money-input input::placeholder{color:#252b37;}
 
 .aud-label{
   color:#8e95a3;
@@ -213,6 +211,143 @@ h1{
   --icon-bg:rgba(255,148,31,.12);
 }
 
+/* Offer Checker */
+.offer-card{
+  margin-top:34px;
+  border-radius:30px;
+  background:#090d15;
+  border:1px solid rgba(120,130,150,.28);
+  padding:26px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+  transition:border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+
+.offer-card.lowball{
+  border-color:rgba(255,82,82,.45);
+  background:linear-gradient(180deg,rgba(255,82,82,.105),rgba(9,13,21,1) 75%);
+}
+
+.offer-card.fair{
+  border-color:rgba(255,196,45,.45);
+  background:linear-gradient(180deg,rgba(255,196,45,.11),rgba(9,13,21,1) 75%);
+}
+
+.offer-card.great{
+  border-color:rgba(33,225,123,.45);
+  background:linear-gradient(180deg,rgba(33,225,123,.105),rgba(9,13,21,1) 75%);
+}
+
+.offer-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.offer-title{
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-.5px;
+}
+
+.offer-pill{
+  padding:7px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  color:#9da9bd;
+  font-size:15px;
+  font-weight:700;
+}
+
+.offer-input-wrap{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  height:66px;
+  padding:0 18px;
+  border-radius:20px;
+  background:#070a10;
+  border:1px solid #252d3a;
+}
+
+.offer-input-wrap input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#f5f7fb;
+  font-size:34px;
+  font-weight:800;
+}
+
+.offer-input-wrap input::placeholder{color:#303847;}
+
+.offer-unit{
+  color:#8994a6;
+  font-size:24px;
+  font-weight:800;
+}
+
+.offer-result{
+  margin-top:22px;
+  padding:22px;
+  border-radius:24px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  text-align:center;
+  transition:all .25s ease;
+}
+
+.status{
+  font-size:42px;
+  font-weight:900;
+  letter-spacing:-1px;
+  line-height:1;
+}
+
+.offer-card.lowball .status{color:#ff5c5c;}
+.offer-card.fair .status{color:#ffc42d;}
+.offer-card.great .status{color:#21e17b;}
+.offer-card.empty .status{color:#9da9bd;}
+
+.percent{
+  margin-top:10px;
+  color:#d8deea;
+  font-size:23px;
+  font-weight:750;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.offer-detail{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.detail-box{
+  padding:15px;
+  border-radius:18px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.055);
+}
+
+.detail-label{
+  color:#8994a6;
+  font-size:15px;
+  font-weight:700;
+}
+
+.detail-value{
+  margin-top:4px;
+  font-size:28px;
+  font-weight:850;
+  color:#f5f7fb;
+}
+
 .footer{
   margin-top:88px;
   text-align:center;
@@ -238,6 +373,12 @@ h1{
   .row-title{font-size:24px;}
   .row-sub{font-size:17px;}
   .row-value{font-size:38px;}
+  .offer-card{padding:22px;border-radius:28px;}
+  .offer-title{font-size:25px;}
+  .offer-pill{font-size:13px;}
+  .status{font-size:35px;}
+  .percent{font-size:19px;}
+  .detail-value{font-size:24px;}
   .footer{font-size:22px;margin-top:76px;}
 }
 </style>
@@ -245,7 +386,7 @@ h1{
 <body>
   <main class="app">
     <section class="header">
-      <h1>Credit Calculator</h1>
+      <h1>Trader+</h1>
       <div class="rate-pill">
         <span>1 AUD =</span>
         <input id="rate" class="rate-input" type="number" step="1" min="1" value="25" oninput="saveRate(); calc()">
@@ -261,7 +402,7 @@ h1{
 
     <section class="fair-card">
       <div class="fair-title">Fair Value</div>
-      <div id="fair" class="fair-value">0c</div>
+      <div id="fair" class="fair-value">🪙 0</div>
     </section>
 
     <section class="list">
@@ -273,7 +414,7 @@ h1{
             <div class="row-sub">Fair Value × 0.95</div>
           </div>
         </div>
-        <div id="quick" class="row-value">0c</div>
+        <div id="quick" class="row-value">🪙 0</div>
       </div>
 
       <div class="row good">
@@ -284,7 +425,7 @@ h1{
             <div class="row-sub">Fair Value × 1.10</div>
           </div>
         </div>
-        <div id="good" class="row-value">0c</div>
+        <div id="good" class="row-value">🪙 0</div>
       </div>
 
       <div class="row high">
@@ -295,11 +436,39 @@ h1{
             <div class="row-sub">Fair Value × 1.25</div>
           </div>
         </div>
-        <div id="high" class="row-value">0c</div>
+        <div id="high" class="row-value">🪙 0</div>
       </div>
     </section>
 
-    <footer class="footer">Made for Elfie's Habbo trading ❤️</footer>
+    <section id="offerCard" class="offer-card empty">
+      <div class="offer-head">
+        <div class="offer-title">Offer Checker</div>
+        <div class="offer-pill">Buyer vs Fair</div>
+      </div>
+
+      <div class="offer-input-wrap">
+        <input id="offer" type="number" step="1" placeholder="300" oninput="calc()">
+        <span class="offer-unit">c</span>
+      </div>
+
+      <div class="offer-result">
+        <div id="offerStatus" class="status">ENTER OFFER</div>
+        <div id="offerPercent" class="percent">Compare buyer offer against fair value</div>
+
+        <div class="offer-detail">
+          <div class="detail-box">
+            <div class="detail-label">Buyer Offered</div>
+            <div id="buyerValue" class="detail-value">🪙 0</div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-label">Fair Value</div>
+            <div id="fairSmall" class="detail-value">🪙 0</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">Made for Habbo NFT Trading ❤️🪙</footer>
   </main>
 
 <script>
@@ -329,14 +498,26 @@ function animateValue(id, target){
     const progress = Math.min((now-startTime)/duration,1);
     const eased = 1 - Math.pow(1-progress,3);
     const current = Math.round(start + (target-start)*eased);
-    document.getElementById(id).textContent = current + 'c';
+    document.getElementById(id).textContent = '🪙 ' + current;
+
     if(progress < 1){
       requestAnimationFrame(frame);
     }else{
       values[id] = target;
     }
   }
+
   requestAnimationFrame(frame);
+}
+
+function setOfferState(state, status, percentText, offer, fair){
+  const card = document.getElementById('offerCard');
+  card.className = 'offer-card ' + state;
+
+  document.getElementById('offerStatus').textContent = status;
+  document.getElementById('offerPercent').textContent = percentText;
+  document.getElementById('buyerValue').textContent = '🪙 ' + offer;
+  document.getElementById('fairSmall').textContent = '🪙 ' + fair;
 }
 
 function calc(){
@@ -347,6 +528,28 @@ function calc(){
   animateValue('quick', Math.round(fair * 0.95));
   animateValue('good', Math.round(fair * 1.10));
   animateValue('high', Math.round(fair * 1.25));
+
+  const offer = Math.round(parseFloat(document.getElementById('offer').value) || 0);
+
+  if(!offer || !fair){
+    setOfferState('empty','ENTER OFFER','Compare buyer offer against fair value',offer,fair);
+    return;
+  }
+
+  const diff = ((offer - fair) / fair) * 100;
+  const absDiff = Math.abs(diff).toFixed(1);
+
+  if(diff <= -10){
+    setOfferState('lowball','🔴 LOWBALL',absDiff + '% BELOW FAIR VALUE',offer,fair);
+  }else if(diff < -5){
+    setOfferState('lowball','🔴 BELOW FAIR',absDiff + '% BELOW FAIR VALUE',offer,fair);
+  }else if(diff <= 5){
+    setOfferState('fair','🟡 FAIR OFFER',absDiff + '% FROM FAIR VALUE',offer,fair);
+  }else if(diff < 15){
+    setOfferState('great','🟢 GOOD OFFER',absDiff + '% ABOVE FAIR VALUE',offer,fair);
+  }else{
+    setOfferState('great','🟢 GREAT DEAL',absDiff + '% ABOVE FAIR VALUE',offer,fair);
+  }
 }
 
 calc();
